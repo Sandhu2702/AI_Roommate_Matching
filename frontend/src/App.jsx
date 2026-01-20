@@ -6,6 +6,7 @@ import FindRoommates from "./pages/FindRoommates";
 import ProfileSetupWizard from "./pages/ProfileSetupWizard";
 import Requests from "./pages/Requests";
 import ChatMessages from "./pages/ChatMessages";
+import Settings from "./pages/Settings";
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
           <Route path="/find-roommates" element={<FindRoommates />} />
           <Route path="/abc" element={<Requests />} />
           <Route path="/" element = {<ChatMessages />} />
+          <Route path="/Settings" element = {<Settings />} />
           <Route path="*" element={<div>404 Not found </div>} />
         </Routes>
       </div>
