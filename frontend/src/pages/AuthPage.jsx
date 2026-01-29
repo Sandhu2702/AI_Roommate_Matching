@@ -1,134 +1,168 @@
-import React, { useState, useEffect } from 'react';
-import { User, Lock, Mail, ShieldCheck, GraduationCap, ArrowLeft, Smartphone } from 'lucide-react';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { 
+  User, 
+  Lock, 
+  Sparkles, 
+  Building2, 
+  Eye, 
+  EyeOff 
+} from 'lucide-react';
 
-const AuthPage = () => {
-  const [isLogin, setIsLogin] = useState(true);
-  const [step, setStep] = useState('auth'); // 'auth' or 'otp'
-  const [otp, setOtp] = useState(new Array(6).fill(""));
-  const [timer, setTimer] = useState(30);
+const Auth = () => {
+  const navigate = useNavigate();
+  const [isLogin, setIsLogin] = useState(true); // Toggle for Login/Signup tabs
+  const [showPassword, setShowPassword] = useState(false);
+  const [formData, setFormData] = useState({ id: '', password: '' });
 
-  // Timer logic for Resend OTP
-  useEffect(() => {
-    let interval;
-    if (step === 'otp' && timer > 0) {
-      interval = setInterval(() => setTimer((prev) => prev - 1), 1000);
-    }
-    return () => clearInterval(interval);
-  }, [step, timer]);
-
-  const handleOtpChange = (element, index) => {
-    if (isNaN(element.value)) return false;
-    setOtp([...otp.map((d, idx) => (idx === index ? element.value : d))]);
-    // Focus next input
-    if (element.nextSibling) {
-      element.nextSibling.focus();
+  const handleLogin = () => {
+    // Mock login logic
+    if (formData.id && formData.password) {
+      // Navigate to the Profile Wizard (Start of the app flow)
+      navigate('/'); 
     }
   };
 
   return (
-    <div className="min-h-screen w-full flex items-center justify-center bg-[#0a0f1e] p-4 font-sans">
-      {/* Decorative background glows */}
-      <div className="absolute top-0 -left-4 w-72 h-72 bg-blue-600 rounded-full filter blur-[120px] opacity-10 animate-pulse"></div>
-      <div className="absolute bottom-0 -right-4 w-72 h-72 bg-purple-600 rounded-full filter blur-[120px] opacity-10 animate-pulse"></div>
+    <div className="min-h-screen bg-[var(--bg-primary)] font-sans flex items-center justify-center p-4 relative overflow-hidden">
+      
+      {/* --- Background Ambient Glow --- */}
+      <div className="absolute top-[-20%] left-[-10%] w-[600px] h-[600px] bg-indigo-600/20 blur-[120px] rounded-full pointer-events-none" />
+      <div className="absolute bottom-[-20%] right-[-10%] w-[600px] h-[600px] bg-purple-600/10 blur-[120px] rounded-full pointer-events-none" />
 
-      <div className="relative w-full max-w-[450px] bg-white/5 backdrop-blur-2xl border border-white/10 rounded-3xl shadow-2xl transition-all duration-500 min-h-[600px] flex flex-col">
+      {/* --- Main Card --- */}
+      <div className="w-full max-w-md bg-[var(--bg-secondary)] border border-white/5 rounded-3xl p-8 shadow-2xl relative z-10 backdrop-blur-sm">
         
-        {/* Header */}
-        <div className="pt-10 pb-6 px-8 text-center">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-white/10 mb-4 border border-white/10">
-            <img src="https://www.mmmut.ac.in/images/logo.png" alt="MMMUT" className="w-12 h-12 object-contain" />
+        {/* Logo Section */}
+        <div className="flex flex-col items-center mb-8">
+          <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mb-4 shadow-lg shadow-white/10">
+            {/* Placeholder for actual logo image */}
+            <div className="w-12 h-12 rounded-full border-2 border-indigo-900 flex items-center justify-center">
+              <span className="text-indigo-900 font-bold text-xs">MMMUT</span>
+            </div>
           </div>
-          <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-            MMMUT Hostel Mate
-          </h1>
+          <h1 className="text-2xl font-bold text-white mb-1">MMMUT Hostel Mate</h1>
+          <p className="text-[var(--text-secondary)] text-sm">AI-Powered Room Allocation System</p>
         </div>
 
-        {step === 'auth' ? (
-          /* LOGIN / SIGNUP VIEW */
-          <div className="animate-in fade-in slide-in-from-right-4 duration-500">
-            <div className="flex p-1 mx-8 mb-6 bg-black/40 rounded-xl border border-white/5">
-              <button onClick={() => setIsLogin(true)} className={`flex-1 py-2 text-sm rounded-lg transition-all ${isLogin ? 'bg-white/10 text-white shadow-lg' : 'text-slate-500'}`}>Login</button>
-              <button onClick={() => setIsLogin(false)} className={`flex-1 py-2 text-sm rounded-lg transition-all ${!isLogin ? 'bg-white/10 text-white shadow-lg' : 'text-slate-500'}`}>Signup</button>
+        {/* Toggle Tabs */}
+        <div className="bg-[var(--bg-primary)] p-1 rounded-xl flex mb-8 border border-white/5">
+          <button 
+            onClick={() => setIsLogin(true)}
+            className={`flex-1 py-2.5 text-sm font-medium rounded-lg transition-all ${
+              isLogin 
+                ? 'bg-[var(--bg-secondary)] text-white shadow-sm border border-white/5' 
+                : 'text-[var(--text-muted)] hover:text-white'
+            }`}
+          >
+            Login
+          </button>
+          <button 
+            onClick={() => setIsLogin(false)}
+            className={`flex-1 py-2.5 text-sm font-medium rounded-lg transition-all ${
+              !isLogin 
+                ? 'bg-[var(--bg-secondary)] text-white shadow-sm border border-white/5' 
+                : 'text-[var(--text-muted)] hover:text-white'
+            }`}
+          >
+            Create Account
+          </button>
+        </div>
+
+        {/* Form Inputs */}
+        <div className="space-y-6">
+          
+          {/* Input 1: College ID */}
+          <div>
+            <label className="block text-xs font-medium text-[var(--text-secondary)] mb-2 uppercase tracking-wide">
+              College ID / Enrollment No.
+            </label>
+            <div className="relative group">
+              <User className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--text-muted)] group-focus-within:text-[var(--accent-primary)] transition-colors" size={20} />
+              <input 
+                type="text" 
+                placeholder="20210410XX"
+                value={formData.id}
+                onChange={(e) => setFormData({...formData, id: e.target.value})}
+                className="w-full bg-[var(--bg-primary)] text-white text-sm rounded-xl pl-12 pr-4 py-3.5 border border-white/5 focus:outline-none focus:border-[var(--accent-primary)] focus:ring-1 focus:ring-[var(--accent-primary)] transition-all placeholder-[var(--text-muted)]"
+              />
             </div>
+            {/* Feature Note 1 */}
+            <div className="flex items-center gap-2 mt-2 text-xs text-purple-400">
+              <Sparkles size={12} />
+              <span>Auto-detects hostel gender eligibility</span>
+            </div>
+          </div>
 
-            <div className="px-8 space-y-5">
-              <div className="space-y-2">
-                <label className="text-xs font-semibold text-slate-400 uppercase ml-1">University ID</label>
-                <div className="relative group">
-                  <GraduationCap className="absolute left-4 top-3.5 text-slate-500 group-focus-within:text-blue-400" size={18} />
-                  <input type="text" placeholder="Enrollment No." className="w-full bg-black/20 border border-white/10 rounded-xl py-3 pl-12 pr-4 text-white focus:ring-2 focus:ring-blue-500/50 outline-none transition-all" />
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-xs font-semibold text-slate-400 uppercase ml-1">Password</label>
-                <div className="relative group">
-                  <Lock className="absolute left-4 top-3.5 text-slate-500 group-focus-within:text-purple-400" size={18} />
-                  <input type="password" placeholder="••••••••" className="w-full bg-black/20 border border-white/10 rounded-xl py-3 pl-12 pr-4 text-white focus:ring-2 focus:ring-purple-500/50 outline-none transition-all" />
-                </div>
-              </div>
-
+          {/* Input 2: Password */}
+          <div>
+            <label className="block text-xs font-medium text-[var(--text-secondary)] mb-2 uppercase tracking-wide">
+              Password
+            </label>
+            <div className="relative group">
+              <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--text-muted)] group-focus-within:text-[var(--accent-primary)] transition-colors" size={20} />
+              <input 
+                type={showPassword ? "text" : "password"} 
+                placeholder="••••••••"
+                value={formData.password}
+                onChange={(e) => setFormData({...formData, password: e.target.value})}
+                className="w-full bg-[var(--bg-primary)] text-white text-sm rounded-xl pl-12 pr-12 py-3.5 border border-white/5 focus:outline-none focus:border-[var(--accent-primary)] focus:ring-1 focus:ring-[var(--accent-primary)] transition-all placeholder-[var(--text-muted)]"
+              />
               <button 
-                onClick={() => setStep('otp')}
-                className="w-full py-4 mt-4 rounded-xl font-bold text-white bg-gradient-to-r from-blue-600 to-purple-600 hover:scale-[1.02] active:scale-[0.98] transition-all shadow-xl shadow-blue-500/10"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-[var(--text-muted)] hover:text-white transition-colors"
               >
-                {isLogin ? 'Request OTP' : 'Create Account'}
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
               </button>
             </div>
           </div>
-        ) : (
-          /* OTP VERIFICATION VIEW */
-          <div className="px-8 space-y-6 animate-in fade-in slide-in-from-right-8 duration-500">
-            <button onClick={() => setStep('auth')} className="flex items-center text-slate-400 hover:text-white transition-colors text-sm mb-2">
-              <ArrowLeft size={16} className="mr-2" /> Back to Login
-            </button>
-            
-            <div className="text-center">
-              <div className="inline-flex p-3 rounded-full bg-blue-500/10 mb-4">
-                <Smartphone className="text-blue-400" size={24} />
-              </div>
-              <h2 className="text-xl font-semibold text-white">Verify Your Identity</h2>
-              <p className="text-slate-400 text-sm mt-2">We've sent a 6-digit code to your university email.</p>
-            </div>
 
-            <div className="flex justify-between gap-2">
-              {otp.map((data, index) => (
-                <input
-                  key={index}
-                  type="text"
-                  maxLength="1"
-                  className="w-12 h-14 bg-black/30 border border-white/10 rounded-xl text-center text-xl font-bold text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all"
-                  value={data}
-                  onChange={e => handleOtpChange(e.target, index)}
-                  onFocus={e => e.target.select()}
-                />
-              ))}
-            </div>
-
-            <button className="w-full py-4 rounded-xl font-bold text-white bg-gradient-to-r from-blue-600 to-purple-600 hover:opacity-90 shadow-lg">
-              Verify & Enter Portal
-            </button>
-
-            <div className="text-center">
-              {timer > 0 ? (
-                <p className="text-slate-500 text-sm">Resend code in <span className="text-blue-400 font-mono">{timer}s</span></p>
-              ) : (
-                <button onClick={() => setTimer(30)} className="text-blue-400 hover:underline text-sm font-medium">Resend OTP Code</button>
-              )}
-            </div>
+          {/* System Note Box */}
+          <div className="bg-[#1e2130]/50 border border-[var(--accent-primary)]/20 rounded-xl p-3 flex gap-3 items-center">
+             <div className="w-8 h-8 rounded-lg bg-[var(--accent-primary)]/10 flex items-center justify-center text-[var(--accent-primary)] flex-shrink-0">
+               <Building2 size={16} />
+             </div>
+             <p className="text-xs text-[var(--text-secondary)] leading-tight">
+               System detects gender & allocates hostel automatically based on database records.
+             </p>
           </div>
-        )}
 
-        <div className="mt-auto pb-10 px-8 text-center">
-           <div className="flex items-center gap-2 p-3 bg-white/5 border border-white/5 rounded-xl text-left mb-6">
-              <ShieldCheck className="text-green-400 shrink-0" size={18} />
-              <p className="text-[10px] text-slate-400">Secure session for Madan Mohan Malviya University of Technology Portal.</p>
-           </div>
-           <p className="text-[11px] text-slate-600 uppercase tracking-[0.2em]">Restricted Academic Access</p>
+          {/* Footer Actions */}
+          <div className="flex items-center justify-between text-sm">
+            <label className="flex items-center gap-2 cursor-pointer group">
+              <div className="w-4 h-4 rounded border border-[var(--text-muted)] group-hover:border-white transition-colors relative flex items-center justify-center">
+                 {/* Checkbox logic would go here */}
+              </div>
+              <span className="text-[var(--text-secondary)] group-hover:text-white transition-colors">Remember me</span>
+            </label>
+            <button className="text-[var(--accent-secondary)] hover:text-[var(--accent-primary)] transition-colors font-medium">
+              Forgot Password?
+            </button>
+          </div>
+
+          {/* Submit Button */}
+          <button 
+            onClick={handleLogin}
+            className="w-full bg-gradient-to-r from-[var(--accent-gradient-start)] to-[var(--accent-gradient-end)] text-white font-semibold py-3.5 rounded-xl hover:opacity-90 transition-opacity shadow-lg shadow-indigo-500/25 active:scale-[0.99] transform duration-100"
+          >
+            Access Portal
+          </button>
+
         </div>
+
+        {/* Footer Links */}
+        <div className="mt-8 pt-6 border-t border-white/5 text-center">
+          <p className="text-xs text-[var(--text-muted)] mb-3">© 2025 MMMUT Gorakhpur. Restricted Access.</p>
+          <div className="flex justify-center gap-4 text-xs text-[var(--text-secondary)]">
+            <button className="hover:text-white transition-colors">Help Desk</button>
+            <span>•</span>
+            <button className="hover:text-white transition-colors">Privacy Policy</button>
+          </div>
+        </div>
+
       </div>
     </div>
   );
 };
 
-export default AuthPage;
+export default Auth;
