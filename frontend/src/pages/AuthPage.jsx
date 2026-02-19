@@ -1,3 +1,4 @@
+import { registerUser, loginUser } from "../api/authApi";
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
@@ -13,15 +14,42 @@ const Auth = () => {
   const navigate = useNavigate();
   const [isLogin, setIsLogin] = useState(true); // Toggle for Login/Signup tabs
   const [showPassword, setShowPassword] = useState(false);
-  const [formData, setFormData] = useState({ id: '', password: '' });
+  // const [formData, setFormData] = useState({ id: '', password: '' });
+  const [formData, setFormData] = useState({email: '',password: '', name: '', gender: ''});
 
-  const handleLogin = () => {
-    // Mock login logic
-    if (formData.id && formData.password) {
-      // Navigate to the Profile Wizard (Start of the app flow)
-      navigate('/'); 
+  const handleLogin = async () => {
+    console.log("Login clicked", formData);//ghgjgjhb
+    try {
+      const res = await loginUser({
+        email: formData.email,
+        password: formData.password,
+      });
+
+      alert("Login successful 🎉");
+      navigate("/"); // or dashboard route
+    } catch (err) {
+      alert(err.response?.data?.error || "Login failed");
     }
   };
+
+  const handleRegister = async () => {
+    console.log("Register clicked", formData);//hgvnbgh
+    try {
+      const res = await registerUser({
+        name: formData.name || "Student",
+        email: formData.email,
+        password: formData.password,
+        gender: formData.gender || "girl"
+      });
+
+      alert(res.data.message); // Registered successfully
+      setIsLogin(true); // switch to login tab
+    } catch (err) {
+      alert(err.response?.data?.error || "Registration failed");
+    }
+  };
+
+
 
   return (
     <div className="min-h-screen bg-[var(--bg-primary)] font-sans flex items-center justify-center p-4 relative overflow-hidden">
@@ -82,8 +110,8 @@ const Auth = () => {
               <input 
                 type="text" 
                 placeholder="20210410XX"
-                value={formData.id}
-                onChange={(e) => setFormData({...formData, id: e.target.value})}
+                value={formData.email}
+                onChange={(e) => setFormData({...formData, email: e.target.value})}
                 className="w-full bg-[var(--bg-primary)] text-white text-sm rounded-xl pl-12 pr-4 py-3.5 border border-white/5 focus:outline-none focus:border-[var(--accent-primary)] focus:ring-1 focus:ring-[var(--accent-primary)] transition-all placeholder-[var(--text-muted)]"
               />
             </div>
@@ -109,6 +137,7 @@ const Auth = () => {
                 className="w-full bg-[var(--bg-primary)] text-white text-sm rounded-xl pl-12 pr-12 py-3.5 border border-white/5 focus:outline-none focus:border-[var(--accent-primary)] focus:ring-1 focus:ring-[var(--accent-primary)] transition-all placeholder-[var(--text-muted)]"
               />
               <button 
+                type="button"
                 onClick={() => setShowPassword(!showPassword)}
                 className="absolute right-4 top-1/2 -translate-y-1/2 text-[var(--text-muted)] hover:text-white transition-colors"
               >
@@ -142,7 +171,7 @@ const Auth = () => {
 
           {/* Submit Button */}
           <button 
-            onClick={handleLogin}
+            onClick={isLogin ? handleLogin : handleRegister}
             className="w-full bg-gradient-to-r from-[var(--accent-gradient-start)] to-[var(--accent-gradient-end)] text-white font-semibold py-3.5 rounded-xl hover:opacity-90 transition-opacity shadow-lg shadow-indigo-500/25 active:scale-[0.99] transform duration-100"
           >
             Access Portal
